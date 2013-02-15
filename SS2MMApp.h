@@ -1,9 +1,9 @@
 /***************************************************************
  * Name:      SS2MMApp.cpp
  * Purpose:   GUI application to install and manage mods for SS2
- * Author:    Ryan Kornheisl (ryan@shard-tech.com)
- * Created:   2013-01-10
- * Copyright: Ryan Kornheisl (ryan.shard-tech.com)
+ * Author:    Ryan Kornheisl (rkornheisl@gmail.com)
+ * Created:   2013-02-14
+ * Copyright: Ryan Kornheisl (www.shard-tech.com)
  * License:   GPLv3
  **************************************************************/
 

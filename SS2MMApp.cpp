@@ -1,9 +1,9 @@
 /***************************************************************
  * Name:      SS2MMApp.cpp
  * Purpose:   Code for Application Class
- * Author:    Ryan Kornheisl (zeebok23@gmail.com)
- * Created:   2013-01-10
- * Copyright: Ryan Kornheisl (www.ryanzero.com)
+ * Author:    Ryan Kornheisl (rkornheisl@gmail.com)
+ * Created:   2013-02-14
+ * Copyright: Ryan Kornheisl (www.shard-tech.com)
  * License:   GPLv3
  **************************************************************/
 

@@ -1,9 +1,9 @@
 /***************************************************************
  * Name:      SS2MMMain.h
  * Purpose:   Defines Application Frame
- * Author:    Ryan Kornheisl (zeebok23@gmail.com)
- * Created:   2013-01-10
- * Copyright: Ryan Kornheisl (www.ryanzero.com)
+ * Author:    Ryan Kornheisl (rkornheisl@gmail.com)
+ * Created:   2013-02-14
+ * Copyright: Ryan Kornheisl (www.shard-tech.com)
  * License:   GPLv3
  **************************************************************/
 
@@ -28,7 +28,10 @@
 enum
 {
   idMenuQuit = 1,
-  idMenuAbout
+  idMenuAbout,
+  idMenuScan,
+  idMenuInstall,
+  idMenuActivate
 };
 
 class SS2MMFrame: public wxFrame
@@ -40,10 +43,15 @@ class SS2MMFrame: public wxFrame
     private:
         wxMenuBar* mbar;
         wxStatusBar* statusBar;
+        wxString status;
+        const wxString version;
 
         void OnClose(wxCloseEvent& event);
         void OnQuit(wxCommandEvent& event);
         void OnAbout(wxCommandEvent& event);
+        void OnScan(wxCommandEvent& event);
+        void OnInstall(wxCommandEvent& event);
+        void OnActivate(wxCommandEvent& event);
 };
 
 #endif // SS2MMMAIN_H
