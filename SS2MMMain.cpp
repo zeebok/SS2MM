@@ -48,8 +48,10 @@ SS2MMFrame::SS2MMFrame(wxWindow* parent, int id, wxString title, wxPoint pos, wx
     modMenu = new wxMenu();
     wxMenuItem* menuModScan = new wxMenuItem(modMenu, idMenuScan, wxString(wxT("&Scan")) + wxT('\t') + wxT("F5"), wxT("Scan for available mods"), wxITEM_NORMAL);
     modMenu->Append(menuModScan);
+
     wxMenuItem* menuModInstall = new wxMenuItem(modMenu, idMenuInstall, wxString(wxT("&Install")), wxT("Install a mod from file"), wxITEM_NORMAL);
     modMenu->Append(menuModInstall);
+
     wxMenuItem* menuModActivate = new wxMenuItem(modMenu, idMenuActivate, wxString(wxT("&Activate/Deactivate")) + wxT('\t') + wxT("F8"), wxT("Activate/Deactivate currently selected mod"), wxITEM_NORMAL);
     modMenu->Append(menuModActivate);
     mbar->Append(modMenu, wxT("&Mods"));
@@ -62,12 +64,56 @@ SS2MMFrame::SS2MMFrame(wxWindow* parent, int id, wxString title, wxPoint pos, wx
     mbar->Append(helpMenu, wxT("&Help"));
     this->SetMenuBar(mbar);
 
+    // Make Toolbar
+    toolbar = CreateToolBar(wxNO_BORDER | wxTB_HORIZONTAL | wxTB_NOICONS | wxTB_TEXT, -1, _("Toolobar"));
+    toolbar->AddTool(idMenuScan, _("Scan"), NULL, wxT("Scan for new mods"), wxITEM_NORMAL);
+    toolbar->AddTool(idMenuInstall, _("Install"), NULL, wxT("Install a mod from file"), wxITEM_NORMAL);
+    toolbar->AddTool(idMenuActivate, _("Activate/Deactivate"), NULL, wxT("Active or Deactivate selected mod"), wxITEM_NORMAL);
+    toolbar->Realize();
+    Connect(idMenuScan, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SS2MMFrame::OnScan));
+    Connect(idMenuInstall, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SS2MMFrame::OnInstall));
+    Connect(idMenuActivate, wxEVT_COMMAND_TOOL_CLICKED, wxCommandEventHandler(SS2MMFrame::OnActivate));
+    toolbar->Show(true);
 
+    // Status bar (shows current status and version)
     statusBar = this->CreateStatusBar(2, wxST_SIZEGRIP, wxID_ANY);
     statusBar->SetStatusText(status, 0);
     statusBar->SetStatusText(version, 1);
     int widths[2] = {-1, 100};
     this->SetStatusWidths(2, widths);
+
+    // Main Panels
+    wxPanel* panel = new wxPanel(this, -1);
+    wxBoxSizer* hbox = new wxBoxSizer(wxHORIZONTAL);
+    wxBoxSizer* infoBox = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* modBox = new wxBoxSizer(wxVERTICAL);
+
+    wxStaticText* inactiveText = new wxStaticText(panel, wxID_ANY, wxT("Available Mods:"));
+    wxBoxSizer* inactiveBox = new wxBoxSizer(wxHORIZONTAL);
+    inactiveList = new wxListBox(panel, ID_PANEL_INACTIVE_LIST, wxPoint(-1, -1), wxSize(-1, -1), 0, NULL, wxLB_SINGLE | wxLB_NEEDED_SB | wxLB_SORT);
+    inactiveBox->Add(inactiveList, 2, wxEXPAND | wxALL, 10);
+    inactiveList->Show(true);
+
+    wxStaticText* activeText = new wxStaticText(panel, wxID_ANY, wxT("Active Mods:"));
+    wxBoxSizer* activeBox = new wxBoxSizer(wxHORIZONTAL);
+    activeList = new wxListBox(panel, ID_PANEL_ACTIVE_LIST, wxPoint(-1, -1), wxSize(-1, -1), 0, NULL, wxLB_SINGLE | wxLB_NEEDED_SB | wxLB_SORT);
+    activeBox->Add(activeList, 2, wxEXPAND | wxALL, 10);
+    activeList->Show(true);
+
+    wxStaticText* infoText = new wxStaticText(panel, wxID_ANY, wxT("Mod Info:"));
+    infoBox->Add(infoText, 0, wxALIGN_CENTER_VERTICAL | wxALL, 10);
+    modInfo = new wxStaticText(panel, wxID_ANY, wxT("Select a mod"));
+    modInfo->Wrap(200);
+    infoBox->Add(modInfo, 0, wxTOP | wxRIGHT, 10);
+
+    modBox->Add(inactiveText, 0, wxLEFT, 10);
+    modBox->Add(inactiveBox, 2, wxEXPAND | wxLEFT | wxRIGHT);
+    modBox->Add(activeText, 0, wxLEFT, 10);
+    modBox->Add(activeBox, 2, wxEXPAND | wxALL);
+    hbox->Add(modBox, 2, wxEXPAND | wxALL | wxALIGN_LEFT);
+    hbox->Add(infoBox);
+    panel->SetSizer(hbox);
+    Center();
 }
 
 SS2MMFrame::~SS2MMFrame()
@@ -92,12 +138,16 @@ void SS2MMFrame::OnAbout(wxCommandEvent &event)
 
 void SS2MMFrame::OnScan(wxCommandEvent& event)
 {
-
+    status = _("Scanning for mods");
+    inactiveList->Append(_("Test Mod"));
+    status = _("Ready");
 }
 
 void SS2MMFrame::OnInstall(wxCommandEvent& event)
 {
+    status = _("Installing mod");
 
+    status = _("Ready");
 }
 
 void SS2MMFrame::OnActivate(wxCommandEvent& event)

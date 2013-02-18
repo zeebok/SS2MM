@@ -34,6 +34,9 @@ enum
   idMenuActivate
 };
 
+const int ID_PANEL_INACTIVE_LIST = 1;
+const int ID_PANEL_ACTIVE_LIST = 2;
+
 class SS2MMFrame: public wxFrame
 {
     DECLARE_EVENT_TABLE()
@@ -43,6 +46,10 @@ class SS2MMFrame: public wxFrame
     private:
         wxMenuBar* mbar;
         wxStatusBar* statusBar;
+        wxToolBar* toolbar;
+        wxListBox* inactiveList;
+        wxListBox* activeList;
+        wxStaticText* modInfo;
         wxString status;
         const wxString version;
 
