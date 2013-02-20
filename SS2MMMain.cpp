@@ -20,7 +20,6 @@
 
 
 #include "SS2MMMain.h"
-#include "minizip/unzip.h" // contrib in zLib 1.2.7
 
 BEGIN_EVENT_TABLE(SS2MMFrame, wxFrame)
     EVT_CLOSE(SS2MMFrame::OnClose)
@@ -92,6 +91,7 @@ SS2MMFrame::SS2MMFrame(wxWindow* parent, int id, wxString title, wxPoint pos, wx
     wxBoxSizer* inactiveBox = new wxBoxSizer(wxHORIZONTAL);
     inactiveList = new wxListBox(panel, ID_PANEL_INACTIVE_LIST, wxPoint(-1, -1), wxSize(-1, -1), 0, NULL, wxLB_SINGLE | wxLB_NEEDED_SB | wxLB_SORT);
     inactiveBox->Add(inactiveList, 2, wxEXPAND | wxALL, 10);
+    Connect(idInactiveClick, wxEVT_LEFT_DOWN, wxMouseEventHandler(SS2MMFrame::OnInactiveDragStart));
     inactiveList->Show(true);
 
     wxStaticText* activeText = new wxStaticText(panel, wxID_ANY, wxT("Active Mods:"));
@@ -153,4 +153,49 @@ void SS2MMFrame::OnInstall(wxCommandEvent& event)
 void SS2MMFrame::OnActivate(wxCommandEvent& event)
 {
 
+}
+
+void SS2MMFrame::OnDrag(wxMouseEvent& event)
+{
+    if(event.Dragging() && inactiveDrag)
+    {
+        activeList->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(SS2MMFrame::OnActiveDragEnd));
+        this->SetCursor(wxCursor(wxCURSOR_HAND));
+    }
+}
+
+void SS2MMFrame::OnInactiveDragStart(wxMouseEvent& event)
+{
+    wxPoint point = event.GetPosition();
+    dragListIndex = inactiveList->HitTest(point);
+    if(dragListIndex != wxNOT_FOUND)
+    {
+        inactiveDrag = true;
+        inactiveList->Connect(wxEVT_MOTION, wxMouseEventHandler(SS2MMFrame::OnDrag));
+    }
+    else
+    {
+        inactiveDrag = false;
+    }
+    event.Skip();
+}
+
+void SS2MMFrame::OnInactiveDragEnd(wxMouseEvent& event)
+{
+
+}
+
+void SS2MMFrame::OnActiveDragStart(wxMouseEvent& event)
+{
+
+}
+
+void SS2MMFrame::OnActiveDragEnd(wxMouseEvent& event)
+{
+    // Get mod item based on dragListIndex
+    wxMessageBox(_("It happened!"));
+    inactiveList->Disconnect(wxEVT_MOTION, wxMouseEventHandler(SS2MMFrame::OnDrag));
+    activeList->Disconnect(wxEVT_LEFT_DOWN, wxMouseEventHandler(SS2MMFrame::OnActiveDragEnd));
+    inactiveDrag = false;
+    activeDrag = false;
 }

@@ -31,7 +31,8 @@ enum
   idMenuAbout,
   idMenuScan,
   idMenuInstall,
-  idMenuActivate
+  idMenuActivate,
+  idInactiveClick
 };
 
 const int ID_PANEL_INACTIVE_LIST = 1;
@@ -52,6 +53,9 @@ class SS2MMFrame: public wxFrame
         wxStaticText* modInfo;
         wxString status;
         const wxString version;
+        bool inactiveDrag;
+        bool activeDrag;
+        int dragListIndex;
 
         void OnClose(wxCloseEvent& event);
         void OnQuit(wxCommandEvent& event);
@@ -59,6 +63,13 @@ class SS2MMFrame: public wxFrame
         void OnScan(wxCommandEvent& event);
         void OnInstall(wxCommandEvent& event);
         void OnActivate(wxCommandEvent& event);
+
+        void OnDrag(wxMouseEvent& event);
+
+        void OnInactiveDragStart(wxMouseEvent& event);
+        void OnInactiveDragEnd(wxMouseEvent& event);
+        void OnActiveDragStart(wxMouseEvent& event);
+        void OnActiveDragEnd(wxMouseEvent& event);
 };
 
 #endif // SS2MMMAIN_H
