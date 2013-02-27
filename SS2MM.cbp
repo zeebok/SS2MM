@@ -39,12 +39,15 @@
 		</Linker>
 		<Unit filename="SS2MMApp.cpp" />
 		<Unit filename="SS2MMApp.h" />
+		<Unit filename="SS2MMDropTarget.cpp" />
+		<Unit filename="SS2MMDropTarget.h" />
 		<Unit filename="SS2MMMain.cpp" />
 		<Unit filename="SS2MMMain.h" />
 		<Unit filename="WxWizFrame.fbp" />
 		<Extensions>
 			<code_completion />
 			<debugger />
+			<envvars />
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>
