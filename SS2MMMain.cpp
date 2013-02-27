@@ -87,25 +87,34 @@ SS2MMFrame::SS2MMFrame(wxWindow* parent, int id, wxString title, wxPoint pos, wx
     wxBoxSizer* infoBox = new wxBoxSizer(wxVERTICAL);
     wxBoxSizer* modBox = new wxBoxSizer(wxVERTICAL);
 
+    // Available/Inactive Mod List
     wxStaticText* inactiveText = new wxStaticText(panel, wxID_ANY, wxT("Available Mods:"));
     wxBoxSizer* inactiveBox = new wxBoxSizer(wxHORIZONTAL);
-    inactiveList = new wxListBox(panel, ID_PANEL_INACTIVE_LIST, wxPoint(-1, -1), wxSize(-1, -1), 0, NULL, wxLB_SINGLE | wxLB_NEEDED_SB | wxLB_SORT);
+    inactiveList = new wxListView(panel, wxID_ANY, wxPoint(-1, -1), wxSize(-1, -1), wxLC_SORT_ASCENDING | wxLC_LIST, wxDefaultValidator, _("InactiveModList"));
     inactiveBox->Add(inactiveList, 2, wxEXPAND | wxALL, 10);
-    Connect(idInactiveClick, wxEVT_LEFT_DOWN, wxMouseEventHandler(SS2MMFrame::OnInactiveDragStart));
+    Connect(inactiveList->GetId(), wxEVT_COMMAND_LIST_BEGIN_DRAG, wxListEventHandler(SS2MMFrame::OnInactiveDragInit));
+    SS2MMDropTarget* inactiveDropTarget = new SS2MMDropTarget(inactiveList, activeList);
+    inactiveList->SetDropTarget(inactiveDropTarget);
     inactiveList->Show(true);
 
+    // Active Mod List
     wxStaticText* activeText = new wxStaticText(panel, wxID_ANY, wxT("Active Mods:"));
     wxBoxSizer* activeBox = new wxBoxSizer(wxHORIZONTAL);
-    activeList = new wxListBox(panel, ID_PANEL_ACTIVE_LIST, wxPoint(-1, -1), wxSize(-1, -1), 0, NULL, wxLB_SINGLE | wxLB_NEEDED_SB | wxLB_SORT);
+    activeList = new wxListView(panel, wxID_ANY, wxPoint(-1, -1), wxSize(-1, -1), wxLC_SORT_ASCENDING | wxLC_LIST, wxDefaultValidator, _("InactiveModList"));
     activeBox->Add(activeList, 2, wxEXPAND | wxALL, 10);
+    Connect(activeList->GetId(), wxEVT_COMMAND_LIST_BEGIN_DRAG, wxListEventHandler(SS2MMFrame::OnActiveDragInit));
+    SS2MMDropTarget* activeDropTarget = new SS2MMDropTarget(activeList, inactiveList);
+    activeList->SetDropTarget(activeDropTarget);
     activeList->Show(true);
 
+    // Mod Info Panel
     wxStaticText* infoText = new wxStaticText(panel, wxID_ANY, wxT("Mod Info:"));
     infoBox->Add(infoText, 0, wxALIGN_CENTER_VERTICAL | wxALL, 10);
     modInfo = new wxStaticText(panel, wxID_ANY, wxT("Select a mod"));
     modInfo->Wrap(200);
     infoBox->Add(modInfo, 0, wxTOP | wxRIGHT, 10);
 
+    // Add all of the various pieces into their proper parents
     modBox->Add(inactiveText, 0, wxLEFT, 10);
     modBox->Add(inactiveBox, 2, wxEXPAND | wxLEFT | wxRIGHT);
     modBox->Add(activeText, 0, wxLEFT, 10);
@@ -139,7 +148,7 @@ void SS2MMFrame::OnAbout(wxCommandEvent &event)
 void SS2MMFrame::OnScan(wxCommandEvent& event)
 {
     status = _("Scanning for mods");
-    inactiveList->Append(_("Test Mod"));
+    inactiveList->InsertItem(0, _("Test Mod"));
     status = _("Ready");
 }
 
@@ -155,47 +164,18 @@ void SS2MMFrame::OnActivate(wxCommandEvent& event)
 
 }
 
-void SS2MMFrame::OnDrag(wxMouseEvent& event)
+void SS2MMFrame::OnInactiveDragInit(wxListEvent& event)
 {
-    if(event.Dragging() && inactiveDrag)
-    {
-        activeList->Connect(wxEVT_LEFT_DOWN, wxMouseEventHandler(SS2MMFrame::OnActiveDragEnd));
-        this->SetCursor(wxCursor(wxCURSOR_HAND));
-    }
+    wxString mod = inactiveList->GetItemText(event.GetIndex());
+    wxTextDataObject modTDO(mod);
+    wxDropSource inactiveTDS(modTDO, inactiveList);
+    inactiveTDS.DoDragDrop(wxDrag_DefaultMove);
 }
 
-void SS2MMFrame::OnInactiveDragStart(wxMouseEvent& event)
+void SS2MMFrame::OnActiveDragInit(wxListEvent& event)
 {
-    wxPoint point = event.GetPosition();
-    dragListIndex = inactiveList->HitTest(point);
-    if(dragListIndex != wxNOT_FOUND)
-    {
-        inactiveDrag = true;
-        inactiveList->Connect(wxEVT_MOTION, wxMouseEventHandler(SS2MMFrame::OnDrag));
-    }
-    else
-    {
-        inactiveDrag = false;
-    }
-    event.Skip();
-}
-
-void SS2MMFrame::OnInactiveDragEnd(wxMouseEvent& event)
-{
-
-}
-
-void SS2MMFrame::OnActiveDragStart(wxMouseEvent& event)
-{
-
-}
-
-void SS2MMFrame::OnActiveDragEnd(wxMouseEvent& event)
-{
-    // Get mod item based on dragListIndex
-    wxMessageBox(_("It happened!"));
-    inactiveList->Disconnect(wxEVT_MOTION, wxMouseEventHandler(SS2MMFrame::OnDrag));
-    activeList->Disconnect(wxEVT_LEFT_DOWN, wxMouseEventHandler(SS2MMFrame::OnActiveDragEnd));
-    inactiveDrag = false;
-    activeDrag = false;
+    wxString mod = activeList->GetItemText(event.GetIndex());
+    wxTextDataObject modTDO(mod);
+    wxDropSource activeTDS(modTDO, activeList);
+    activeTDS.DoDragDrop(wxDrag_DefaultMove);
 }

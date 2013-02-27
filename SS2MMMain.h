@@ -21,9 +21,9 @@
 #include <wx/wx.h>
 #endif
 
-#include <wx/menu.h>
 
 #include "SS2MMApp.h"
+#include "SS2MMDropTarget.h"
 
 enum
 {
@@ -31,12 +31,8 @@ enum
   idMenuAbout,
   idMenuScan,
   idMenuInstall,
-  idMenuActivate,
-  idInactiveClick
+  idMenuActivate
 };
-
-const int ID_PANEL_INACTIVE_LIST = 1;
-const int ID_PANEL_ACTIVE_LIST = 2;
 
 class SS2MMFrame: public wxFrame
 {
@@ -48,14 +44,11 @@ class SS2MMFrame: public wxFrame
         wxMenuBar* mbar;
         wxStatusBar* statusBar;
         wxToolBar* toolbar;
-        wxListBox* inactiveList;
-        wxListBox* activeList;
+        wxListView* inactiveList;
+        wxListView* activeList;
         wxStaticText* modInfo;
         wxString status;
         const wxString version;
-        bool inactiveDrag;
-        bool activeDrag;
-        int dragListIndex;
 
         void OnClose(wxCloseEvent& event);
         void OnQuit(wxCommandEvent& event);
@@ -64,12 +57,8 @@ class SS2MMFrame: public wxFrame
         void OnInstall(wxCommandEvent& event);
         void OnActivate(wxCommandEvent& event);
 
-        void OnDrag(wxMouseEvent& event);
-
-        void OnInactiveDragStart(wxMouseEvent& event);
-        void OnInactiveDragEnd(wxMouseEvent& event);
-        void OnActiveDragStart(wxMouseEvent& event);
-        void OnActiveDragEnd(wxMouseEvent& event);
+        void OnInactiveDragInit(wxListEvent& event);
+        void OnActiveDragInit(wxListEvent& event);
 };
 
 #endif // SS2MMMAIN_H
