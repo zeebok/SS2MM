@@ -93,8 +93,7 @@ SS2MMFrame::SS2MMFrame(wxWindow* parent, int id, wxString title, wxPoint pos, wx
     inactiveList = new wxListView(panel, wxID_ANY, wxPoint(-1, -1), wxSize(-1, -1), wxLC_SORT_ASCENDING | wxLC_LIST, wxDefaultValidator, _("InactiveModList"));
     inactiveBox->Add(inactiveList, 2, wxEXPAND | wxALL, 10);
     Connect(inactiveList->GetId(), wxEVT_COMMAND_LIST_BEGIN_DRAG, wxListEventHandler(SS2MMFrame::OnInactiveDragInit));
-    SS2MMDropTarget* inactiveDropTarget = new SS2MMDropTarget(inactiveList, activeList);
-    inactiveList->SetDropTarget(inactiveDropTarget);
+
     inactiveList->Show(true);
 
     // Active Mod List
@@ -103,8 +102,7 @@ SS2MMFrame::SS2MMFrame(wxWindow* parent, int id, wxString title, wxPoint pos, wx
     activeList = new wxListView(panel, wxID_ANY, wxPoint(-1, -1), wxSize(-1, -1), wxLC_SORT_ASCENDING | wxLC_LIST, wxDefaultValidator, _("InactiveModList"));
     activeBox->Add(activeList, 2, wxEXPAND | wxALL, 10);
     Connect(activeList->GetId(), wxEVT_COMMAND_LIST_BEGIN_DRAG, wxListEventHandler(SS2MMFrame::OnActiveDragInit));
-    SS2MMDropTarget* activeDropTarget = new SS2MMDropTarget(activeList, inactiveList);
-    activeList->SetDropTarget(activeDropTarget);
+
     activeList->Show(true);
 
     // Mod Info Panel
@@ -166,6 +164,8 @@ void SS2MMFrame::OnActivate(wxCommandEvent& event)
 
 void SS2MMFrame::OnInactiveDragInit(wxListEvent& event)
 {
+    SS2MMDropTarget* activeDropTarget = new SS2MMDropTarget(activeList, inactiveList);
+    activeList->SetDropTarget(activeDropTarget);
     wxString mod = inactiveList->GetItemText(event.GetIndex());
     wxTextDataObject modTDO(mod);
     wxDropSource inactiveTDS(modTDO, inactiveList);
@@ -174,6 +174,8 @@ void SS2MMFrame::OnInactiveDragInit(wxListEvent& event)
 
 void SS2MMFrame::OnActiveDragInit(wxListEvent& event)
 {
+    SS2MMDropTarget* inactiveDropTarget = new SS2MMDropTarget(inactiveList, activeList);
+    inactiveList->SetDropTarget(inactiveDropTarget);
     wxString mod = activeList->GetItemText(event.GetIndex());
     wxTextDataObject modTDO(mod);
     wxDropSource activeTDS(modTDO, activeList);
