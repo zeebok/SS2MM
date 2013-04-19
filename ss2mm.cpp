@@ -1,6 +1,8 @@
 #include "ss2mm.h"
 #include "ui_ss2mm.h"
 #include <QFileDialog>
+#include <QDir>
+#include <QDirIterator>
 
 SS2MM::SS2MM(QWidget *parent) :
     QMainWindow(parent),
@@ -24,7 +26,20 @@ SS2MM::~SS2MM()
 
 void SS2MM::on_action_Scan_triggered()
 {
-    // Scan <ModDir for non-empty folders; name will dictate name of mod
+    // Scan <ModDir> for non-empty folders; name will dictate name of mod
+    QStringList list = inactiveModel->stringList();
+    QDir dir(MODDIR);
+    dir.setFilter(QDir::Dirs | QDir::NoDotAndDotDot);
+    QFileInfoList info = dir.entryInfoList();
+    for (int i = 0; i < info.size(); ++i)
+    {
+        QFileInfo fileInfo = info.at(i);
+        if(fileInfo.isDir() && fileInfo.dir().count() > 0)
+        {
+            list.append(fileInfo.fileName());
+        }
+    }
+    inactiveModel->setStringList(list);
 }
 
 void SS2MM::on_action_Install_triggered()
