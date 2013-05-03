@@ -6,6 +6,7 @@
 #include <QMessageBox>
 #include <quazip/quazip.h>
 #include <quazip/quazipfile.h>
+#include <quazip/JlCompress.h>
 
 #include <QDebug>
 
@@ -26,6 +27,8 @@ SS2MM::SS2MM(QWidget *parent) :
 
 SS2MM::~SS2MM()
 {
+    delete ui->InactiveList;
+    delete ui->ActiveList;
     delete ui;
 }
 
@@ -62,10 +65,12 @@ void SS2MM::on_action_Install_triggered()
         {
             QString modName = regex.cap(0);
 
-            unzipMod(filename);
+            QStringList zipList = JlCompress::extractDir(filename);
+            if(zipList.isEmpty())
+                return;
 
             QStringList list = inactiveModel->stringList();
-            list.append(modName);
+            list.append(modName.replace(QRegExp(".zip|.ss2mod", Qt::CaseInsensitive), ""));
             inactiveModel->setStringList(list);
             QModelIndex index = inactiveModel->index(inactiveModel->rowCount());
             ui->InactiveList->setCurrentIndex(index);
@@ -98,28 +103,4 @@ void SS2MM::on_action_About_triggered()
     about.setText("System Shock 2 Mod Manager v0.1");
     about.setInformativeText(aboutText);
     about.exec();
-}
-
-void SS2MM::unzipMod(const QString filename)
-{
-    QuaZip zip(filename);
-    zip.open(QuaZip::mdUnzip);
-
-    //QuaZipFile file(&zip);
-    QStringList filenames = zip.getFileNameList();
-    foreach(QString name, filenames)
-    {
-        qDebug() << name;
-    }
-
-//    for(bool f=zip.goToFirstFile(); f; f=zip.goToNextFile())
-//    {
-//        file.open(QIODevice::ReadOnly);
-//        QFile output;
-//        quint64 size = qMin(static_cast<quint64>(4096), file.size());
-//        char data[4096];
-//        file.read(data, size);
-//    }
-
-    zip.close();
 }

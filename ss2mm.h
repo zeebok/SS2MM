@@ -31,7 +31,6 @@ class SS2MM : public QMainWindow
         Ui::SS2MM *ui;
         QStringListModel *inactiveModel;
         QStringListModel *activeModel;
-        void unzipMod(const QString filename);
 };
 
 #endif // SS2MM_H
