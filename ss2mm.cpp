@@ -4,11 +4,7 @@
 #include <QDir>
 #include <QDirIterator>
 #include <QMessageBox>
-#include <quazip/quazip.h>
-#include <quazip/quazipfile.h>
 #include <quazip/JlCompress.h>
-
-#include <QDebug>
 
 SS2MM::SS2MM(QWidget *parent) :
     QMainWindow(parent),
@@ -34,7 +30,7 @@ SS2MM::~SS2MM()
 
 void SS2MM::on_action_Scan_triggered()
 {
-    // Scan <ModDir> for non-empty folders; name will dictate name of mod
+    // Scan <ModDir> for non-empty folders; name of dir will dictate name of mod
     QStringList list = inactiveModel->stringList();
     QDir dir(MODDIR);
     dir.setFilter(QDir::Dirs | QDir::NoDotAndDotDot);
@@ -63,14 +59,16 @@ void SS2MM::on_action_Install_triggered()
         int pos = regex.indexIn(filename);
         if(pos > -1)
         {
-            QString modName = regex.cap(0);
+            // Get mod name + extension
+            QString modName = regex.cap(0).replace(QRegExp(".zip|.ss2mod", Qt::CaseInsensitive), "");
 
-            QStringList zipList = JlCompress::extractDir(filename);
+            // Call QuaZip library to extract compressed file to <ModDir>/<ModName>
+            QStringList zipList = JlCompress::extractDir(filename, QString(MODDIR + '/' + modName));
             if(zipList.isEmpty())
                 return;
 
             QStringList list = inactiveModel->stringList();
-            list.append(modName.replace(QRegExp(".zip|.ss2mod", Qt::CaseInsensitive), ""));
+            list.append(modName);
             inactiveModel->setStringList(list);
             QModelIndex index = inactiveModel->index(inactiveModel->rowCount());
             ui->InactiveList->setCurrentIndex(index);
