@@ -2,7 +2,7 @@
 #define SS2MM_H
 
 #include <QMainWindow>
-#include <QStringListModel>
+#include "modlistmodel.h"
 
 const QString MODDIR = "DataPermMods";
 
@@ -25,12 +25,14 @@ class SS2MM : public QMainWindow
 
         void on_action_Activate_Deactivate_triggered();
 
+        void on_action_Apply_triggered();
+
         void on_action_About_triggered();
 
     private:
         Ui::SS2MM *ui;
-        QStringListModel *inactiveModel;
-        QStringListModel *activeModel;
+        ModListModel *inactiveModel;
+        ModListModel *activeModel;
 };
 
 #endif // SS2MM_H

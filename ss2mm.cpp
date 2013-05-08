@@ -9,10 +9,13 @@
 SS2MM::SS2MM(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::SS2MM),
-    inactiveModel(new QStringListModel(this)),
-    activeModel(new QStringListModel(this))
+    inactiveModel(new ModListModel(this)),
+    activeModel(new ModListModel(this))
 {
     ui->setupUi(this);
+
+    inactiveModel->sort(0);
+
     QStringList list;
     list << "Test 1" << "Test 2";
 
@@ -65,7 +68,10 @@ void SS2MM::on_action_Install_triggered()
             // Call QuaZip library to extract compressed file to <ModDir>/<ModName>
             QStringList zipList = JlCompress::extractDir(filename, QString(MODDIR + '/' + modName));
             if(zipList.isEmpty())
+            {
+                // Dialog saying it failed to load
                 return;
+            }
 
             QStringList list = inactiveModel->stringList();
             list.append(modName);
@@ -81,12 +87,18 @@ void SS2MM::on_action_Activate_Deactivate_triggered()
     // Toggle last clicked mod from either list (if possible)
     if(ui->InactiveList->hasFocus())
     {
-
+        QModelIndex index = ui->InactiveList->currentIndex();
+//        QString mod = inactiveModel->get(index).name;
     }
     else if(ui->ActiveList->hasFocus())
     {
 
     }
+}
+
+void SS2MM::on_action_Apply_triggered()
+{
+    // Write active mod list into mod_path list in cam_mod.ini
 }
 
 void SS2MM::on_action_About_triggered()

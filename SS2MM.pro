@@ -13,9 +13,11 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        ss2mm.cpp
+        ss2mm.cpp \
+    modlistmodel.cpp
 
-HEADERS  += ss2mm.h
+HEADERS  += ss2mm.h \
+    modlistmodel.h
 
 FORMS    += ss2mm.ui
 

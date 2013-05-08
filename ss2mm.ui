@@ -49,14 +49,26 @@
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
        <widget class="QListView" name="InactiveList">
+        <property name="acceptDrops">
+         <bool>true</bool>
+        </property>
         <property name="editTriggers">
          <set>QAbstractItemView::NoEditTriggers</set>
         </property>
         <property name="dragEnabled">
          <bool>true</bool>
         </property>
+        <property name="dragDropOverwriteMode">
+         <bool>false</bool>
+        </property>
         <property name="dragDropMode">
          <enum>QAbstractItemView::DragDrop</enum>
+        </property>
+        <property name="defaultDropAction">
+         <enum>Qt::MoveAction</enum>
+        </property>
+        <property name="selectionBehavior">
+         <enum>QAbstractItemView::SelectItems</enum>
         </property>
        </widget>
       </item>
@@ -78,11 +90,23 @@
       </item>
       <item>
        <widget class="QListView" name="ActiveList">
+        <property name="acceptDrops">
+         <bool>true</bool>
+        </property>
+        <property name="editTriggers">
+         <set>QAbstractItemView::NoEditTriggers</set>
+        </property>
         <property name="dragEnabled">
          <bool>true</bool>
         </property>
+        <property name="dragDropOverwriteMode">
+         <bool>false</bool>
+        </property>
         <property name="dragDropMode">
-         <enum>QAbstractItemView::InternalMove</enum>
+         <enum>QAbstractItemView::DragDrop</enum>
+        </property>
+        <property name="defaultDropAction">
+         <enum>Qt::MoveAction</enum>
         </property>
        </widget>
       </item>
@@ -103,6 +127,7 @@
     <property name="title">
      <string>&amp;File</string>
     </property>
+    <addaction name="action_Apply"/>
     <addaction name="action_Quit"/>
    </widget>
    <widget class="QMenu" name="menuMods">
@@ -134,6 +159,7 @@
    <addaction name="action_Scan"/>
    <addaction name="action_Install"/>
    <addaction name="action_Activate_Deactivate"/>
+   <addaction name="action_Apply"/>
   </widget>
   <widget class="QStatusBar" name="statusBar">
    <property name="mouseTracking">
@@ -180,6 +206,11 @@
   <action name="action_Help">
    <property name="text">
     <string>&amp;Help</string>
+   </property>
+  </action>
+  <action name="action_Apply">
+   <property name="text">
+    <string>&amp;Apply</string>
    </property>
   </action>
  </widget>
