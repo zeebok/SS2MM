@@ -21,6 +21,7 @@ SS2MM::SS2MM(QWidget *parent) :
 
     inactiveModel->setStringList(list);
     ui->InactiveList->setModel(inactiveModel);
+    ui->ActiveList->setModel(activeModel);
     // Should scan for available and already active mods
 }
 
@@ -88,11 +89,30 @@ void SS2MM::on_action_Activate_Deactivate_triggered()
     if(ui->InactiveList->hasFocus())
     {
         QModelIndex index = ui->InactiveList->currentIndex();
-//        QString mod = inactiveModel->get(index).name;
+        QVariant value = ui->InactiveList->model()->data(index);
+        if(value.isValid())
+        {
+            QString mod = value.toString();
+
+            QStringList activeMods = activeModel->stringList();
+            activeMods.append(mod);
+            activeModel->setStringList(activeMods);
+            inactiveModel->removeRow(index.row());
+        }
     }
     else if(ui->ActiveList->hasFocus())
     {
+        QModelIndex index = ui->ActiveList->currentIndex();
+        QVariant value = ui->ActiveList->model()->data(index);
+        if(value.isValid())
+        {
+            QString mod = value.toString();
 
+            QStringList inactiveMods = inactiveModel->stringList();
+            inactiveMods.append(mod);
+            inactiveModel->setStringList(inactiveMods);
+            activeModel->removeRow(index.row());
+        }
     }
 }
 
