@@ -33,6 +33,7 @@ class SS2MM : public QMainWindow
         Ui::SS2MM *ui;
         ModListModel *inactiveModel;
         ModListModel *activeModel;
+        bool modifiedFlag;
 };
 
 #endif // SS2MM_H

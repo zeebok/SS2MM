@@ -4,6 +4,7 @@
 #include <QDir>
 #include <QDirIterator>
 #include <QMessageBox>
+#include <QTextStream>
 #include <quazip/JlCompress.h>
 
 SS2MM::SS2MM(QWidget *parent) :
@@ -14,15 +15,10 @@ SS2MM::SS2MM(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    inactiveModel->sort(0);
-
-    QStringList list;
-    list << "Test 1" << "Test 2";
-
-    inactiveModel->setStringList(list);
     ui->InactiveList->setModel(inactiveModel);
     ui->ActiveList->setModel(activeModel);
     // Should scan for available and already active mods
+    // Need to compare active list with installed mods
 }
 
 SS2MM::~SS2MM()
@@ -85,7 +81,7 @@ void SS2MM::on_action_Install_triggered()
 
 void SS2MM::on_action_Activate_Deactivate_triggered()
 {
-    // Toggle last clicked mod from either list (if possible)
+    // Toggle last clicked mod from either list (if a list has focus)
     if(ui->InactiveList->hasFocus())
     {
         QModelIndex index = ui->InactiveList->currentIndex();
@@ -98,6 +94,7 @@ void SS2MM::on_action_Activate_Deactivate_triggered()
             activeMods.append(mod);
             activeModel->setStringList(activeMods);
             inactiveModel->removeRow(index.row());
+            modifiedFlag = true;
         }
     }
     else if(ui->ActiveList->hasFocus())
@@ -112,6 +109,7 @@ void SS2MM::on_action_Activate_Deactivate_triggered()
             inactiveMods.append(mod);
             inactiveModel->setStringList(inactiveMods);
             activeModel->removeRow(index.row());
+            modifiedFlag = true;
         }
     }
 }
@@ -119,6 +117,36 @@ void SS2MM::on_action_Activate_Deactivate_triggered()
 void SS2MM::on_action_Apply_triggered()
 {
     // Write active mod list into mod_path list in cam_mod.ini
+    QFile camMod("cam_mod.ini");
+    if(!camMod.open(QIODevice::ReadOnly | QIODevice::Text))
+        return; // Should probably display error about not seeing the file
+
+    // Find mod_path line while creating a new file
+    QFile outFile("ss2mmtemp");
+    outFile.open(QIODevice::WriteOnly | QIODevice::Text);
+    QTextStream outStream(&outFile);
+    QTextStream inStream(&camMod);
+    while(!inStream.atEnd())
+    {
+        QString line = inStream.readLine();
+        if(line.contains(QRegExp("^mod_path")))
+        {
+            QString modPath = "mod_path DataoutFileMods+";
+            QStringList modList = activeModel->stringList();
+            foreach (QString mod, modList)
+            {
+                modPath += "DataPermMods/" + mod + "+";
+            }
+            modPath += "patch_ext";
+            outStream << modPath;
+        }
+        else
+            outStream << line << endl;
+    }
+    outFile.close();
+    camMod.close();
+    camMod.remove();
+    outFile.rename("cam_mod.ini");
 }
 
 void SS2MM::on_action_About_triggered()
