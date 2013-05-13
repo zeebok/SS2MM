@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include "modlistmodel.h"
 
-const QString MODDIR = "DataPermMods";
+const QString MODDIR = "SaltedFries";
 
 namespace Ui {
     class SS2MM;

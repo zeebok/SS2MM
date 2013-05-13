@@ -116,6 +116,8 @@ void SS2MM::on_action_Activate_Deactivate_triggered()
 
 void SS2MM::on_action_Apply_triggered()
 {
+    if(activeModel->stringList().count() == 0)
+        return;
     // Write active mod list into mod_path list in cam_mod.ini
     QFile camMod("cam_mod.ini");
     if(!camMod.open(QIODevice::ReadOnly | QIODevice::Text))
