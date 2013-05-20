@@ -17,7 +17,7 @@ SS2MM::SS2MM(QWidget *parent) :
 
     ui->InactiveList->setModel(inactiveModel);
     ui->ActiveList->setModel(activeModel);
-    // Should scan for available and already active mods
+    on_action_Scan_triggered();
     // Need to compare active list with installed mods
 }
 
@@ -133,11 +133,11 @@ void SS2MM::on_action_Apply_triggered()
         QString line = inStream.readLine();
         if(line.contains(QRegExp("^mod_path")))
         {
-            QString modPath = "mod_path DataoutFileMods+";
+            QString modPath = "mod_path DataMods+";
             QStringList modList = activeModel->stringList();
             foreach (QString mod, modList)
             {
-                modPath += "DataPermMods/" + mod + "+";
+                modPath += MODDIR + "/" + mod + "+";
             }
             modPath += "patch_ext";
             outStream << modPath;
@@ -163,4 +163,10 @@ void SS2MM::on_action_About_triggered()
     about.setText("System Shock 2 Mod Manager v0.1");
     about.setInformativeText(aboutText);
     about.exec();
+}
+
+void SS2MM::on_action_Quit_triggered()
+{
+    // Check if active mod list changed
+    this->close();
 }

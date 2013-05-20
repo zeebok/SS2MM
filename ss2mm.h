@@ -29,7 +29,9 @@ class SS2MM : public QMainWindow
 
         void on_action_About_triggered();
 
-    private:
+        void on_action_Quit_triggered();
+
+private:
         Ui::SS2MM *ui;
         ModListModel *inactiveModel;
         ModListModel *activeModel;
