@@ -29,13 +29,17 @@ class SS2MM : public QMainWindow
 
         void on_action_About_triggered();
 
-    private:
+        void on_action_Quit_triggered();
+
+private:
         Ui::SS2MM *ui;
+        QStringList originalActiveList;
         ModListModel *inactiveModel;
         ModListModel *activeModel;
         bool modifiedFlag;
         void scan(QStringList *list);
         void readModIni(QStringList *list);
+        void writeModIni(QStringList modList);
 };
 
 #endif // SS2MM_H
