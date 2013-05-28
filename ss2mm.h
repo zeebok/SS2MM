@@ -34,6 +34,8 @@ class SS2MM : public QMainWindow
         ModListModel *inactiveModel;
         ModListModel *activeModel;
         bool modifiedFlag;
+        void scan(QStringList *list);
+        void readModIni(QStringList *list);
 };
 
 #endif // SS2MM_H
