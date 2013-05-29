@@ -25,7 +25,8 @@ SS2MM::SS2MM(QWidget *parent) :
     // Need to compare active list with installed mods
     QStringList::iterator it = activeList.begin();
     while(it != activeList.end()) {
-        if(int pos = inactiveList.indexOf(*it) != -1) {
+        int pos = inactiveList.indexOf(*it);
+        if(pos != -1) {
             inactiveList.removeAt(pos);
         }
         it++;
@@ -103,10 +104,12 @@ void SS2MM::on_action_Activate_Deactivate_triggered() {
 }
 
 void SS2MM::on_action_Apply_triggered() {
-    if(activeModel->stringList().count() == 0)
+    if(activeModel->stringList().count() == 0) {
         return;
-    else
+    } else {
         writeModIni(activeModel->stringList());
+        originalActiveList = activeModel->stringList();
+    }
 }
 
 void SS2MM::on_action_About_triggered() {
@@ -122,27 +125,6 @@ void SS2MM::on_action_About_triggered() {
 }
 
 void SS2MM::on_action_Quit_triggered() {
-    // Check for changes in active mod list (compare against loaded StringList?)
-    if(activeModel->stringList() != originalActiveList) {
-        QMessageBox msg;
-        msg.setText("You have changed what mods are active.");
-        msg.setDetailedText("Would you like to save these changes?");
-        msg.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
-        msg.setDefaultButton(QMessageBox::Save);
-        int ret = msg.exec();
-        switch(ret) {
-            case QMessageBox::Save:
-                writeModIni(activeModel->stringList());
-                break;
-            case QMessageBox::Cancel:
-                return;
-                break;
-            case QMessageBox::Discard:
-            default:
-                break;
-        }
-    }
-
     this->close();
 }
 
@@ -174,7 +156,7 @@ void SS2MM::readModIni(QStringList *list) {
             QStringList modList = modRE.capturedTexts();
             QStringList::iterator it = modList.begin();
             while(it != modList.end()) {
-                if(!it->contains("SaltedFries/")) {
+                if(!it->contains("SaltedFries/") && *it != "") {
                     list->append(*it);
                 }
                 it++;
@@ -209,5 +191,29 @@ void SS2MM::writeModIni(QStringList modList) {
     camMod.close();
     camMod.remove();
     outFile.rename("cam_mod.ini");
-    originalActiveList = modlist;
+    originalActiveList = modList;
+}
+
+void SS2MM::closeEvent(QCloseEvent *event) {
+    // Check for changes in active mod list (compare against loaded StringList?)
+    if(activeModel->stringList() != originalActiveList) {
+        QMessageBox msg;
+        msg.setText("You have changed what mods are active.");
+        msg.setDetailedText("Would you like to save these changes?");
+        msg.setStandardButtons(QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+        msg.setDefaultButton(QMessageBox::Save);
+        int ret = msg.exec();
+        switch(ret) {
+            case QMessageBox::Save:
+                writeModIni(activeModel->stringList());
+                break;
+            case QMessageBox::Cancel:
+                event->ignore();
+                break;
+            case QMessageBox::Discard:
+            default:
+                break;
+        }
+    }
+    event->accept();
 }

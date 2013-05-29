@@ -1,6 +1,7 @@
 #ifndef SS2MM_H
 #define SS2MM_H
 
+#include <QtWidgets>
 #include <QMainWindow>
 #include "modlistmodel.h"
 
@@ -10,13 +11,15 @@ namespace Ui {
     class SS2MM;
 }
 
-class SS2MM : public QMainWindow
-{
+class SS2MM : public QMainWindow {
         Q_OBJECT
 
     public:
         explicit SS2MM(QWidget *parent = 0);
         ~SS2MM();
+
+    protected:
+        void closeEvent(QCloseEvent *event);
 
     private slots:
         void on_action_Scan_triggered();
@@ -31,7 +34,7 @@ class SS2MM : public QMainWindow
 
         void on_action_Quit_triggered();
 
-private:
+    private:
         Ui::SS2MM *ui;
         QStringList originalActiveList;
         ModListModel *inactiveModel;
