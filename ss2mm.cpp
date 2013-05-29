@@ -1,3 +1,20 @@
+/*  System Shock 2 Mod Manager (SS2MM)
+    Copyright (C) 2013  Ryan "zeebok" Kornheisl
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include "ss2mm.h"
 #include "ui_ss2mm.h"
 #include <QFileDialog>
@@ -85,7 +102,6 @@ void SS2MM::on_action_Activate_Deactivate_triggered() {
             activeMods.append(mod);
             activeModel->setStringList(activeMods);
             inactiveModel->removeRow(index.row());
-            modifiedFlag = true;
         }
     }
     else if(ui->ActiveList->hasFocus()) {
@@ -98,7 +114,6 @@ void SS2MM::on_action_Activate_Deactivate_triggered() {
             inactiveMods.append(mod);
             inactiveModel->setStringList(inactiveMods);
             activeModel->removeRow(index.row());
-            modifiedFlag = true;
         }
     }
 }
@@ -108,7 +123,6 @@ void SS2MM::on_action_Apply_triggered() {
         return;
     } else {
         writeModIni(activeModel->stringList());
-        originalActiveList = activeModel->stringList();
     }
 }
 
