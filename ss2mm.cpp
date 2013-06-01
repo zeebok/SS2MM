@@ -52,7 +52,7 @@ SS2MM::~SS2MM() {
 }
 
 void SS2MM::on_action_Scan_triggered() {
-    QStringList iList = inactiveModel->stringList();
+    QStringList iList;
     QStringList aList = activeModel->stringList();
     scan(&iList, aList);
     inactiveModel->setStringList(iList);
@@ -71,7 +71,10 @@ void SS2MM::on_action_Install_triggered() {
             // Call QuaZip library to extract compressed file to <ModDir>/<ModName>
             QStringList zipList = JlCompress::extractDir(filename, QString(MODDIR + '/' + modName));
             if(zipList.isEmpty()) {
-                // Dialog saying it failed to load
+                QMessageBox err;
+                err.setWindowTitle("Error opening file");
+                err.setText("Could not open the file. It is likely not a currently supported file format.");
+                err.exec();
                 return;
             }
 
