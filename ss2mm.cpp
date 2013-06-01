@@ -37,17 +37,9 @@ SS2MM::SS2MM(QWidget *parent) :
     // Should scan for available and already active mods
     QStringList inactiveList;
     QStringList activeList;
-    scan(&inactiveList);
     readModIni(&activeList);
-    // Need to compare active list with installed mods
-    QStringList::iterator it = activeList.begin();
-    while(it != activeList.end()) {
-        int pos = inactiveList.indexOf(*it);
-        if(pos != -1) {
-            inactiveList.removeAt(pos);
-        }
-        it++;
-    }
+    scan(&inactiveList, activeList);
+
     inactiveModel->setStringList(inactiveList);
     activeModel->setStringList(activeList);
     originalActiveList = activeList;
@@ -60,9 +52,10 @@ SS2MM::~SS2MM() {
 }
 
 void SS2MM::on_action_Scan_triggered() {
-    QStringList list = inactiveModel->stringList();
-    scan(&list);
-    inactiveModel->setStringList(list);
+    QStringList iList = inactiveModel->stringList();
+    QStringList aList = activeModel->stringList();
+    scan(&iList, aList);
+    inactiveModel->setStringList(iList);
 }
 
 void SS2MM::on_action_Install_triggered() {
@@ -142,15 +135,25 @@ void SS2MM::on_action_Quit_triggered() {
     this->close();
 }
 
-void SS2MM::scan(QStringList *list) {
+void SS2MM::scan(QStringList *iList, QStringList aList) {
     QDir dir(MODDIR);
     dir.setFilter(QDir::Dirs | QDir::NoDotAndDotDot);
     QFileInfoList info = dir.entryInfoList();
     for (int i = 0; i < info.size(); ++i) {
         QFileInfo fileInfo = info.at(i);
         if(fileInfo.isDir() && fileInfo.dir().count() > 0) {
-            list->append(fileInfo.fileName());
+            iList->append(fileInfo.fileName());
         }
+    }
+
+    // Need to compare active list with installed mods
+    QStringList::iterator it = aList.begin();
+    while(it != aList.end()) {
+        int pos = iList->indexOf(*it);
+        if(pos != -1) {
+            iList->removeAt(pos);
+        }
+        it++;
     }
 }
 

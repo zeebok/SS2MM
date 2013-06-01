@@ -56,7 +56,7 @@ class SS2MM : public QMainWindow {
         QStringList originalActiveList;
         ModListModel *inactiveModel;
         ModListModel *activeModel;
-        void scan(QStringList *list);
+        void scan(QStringList *iList, QStringList aList);
         void readModIni(QStringList *list);
         void writeModIni(QStringList modList);
 };
